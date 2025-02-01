@@ -1,4 +1,4 @@
-from flask import Flask, render_template, jsonify
+from flask import Flask, render_template, jsonify, request
 from flask_mysqldb import MySQL
 
 # configuracion con la base de datos
@@ -14,11 +14,26 @@ mysql = MySQL(app)
 
 @app.route('/custumers', methods=['POST'])
 def save_custumer():
+    # return request.json['firstname']
     cur = mysql.connection.cursor()
     cur.execute(
-        "INSERT INTO custumers (firstname, lastname, email, phone, address) VALUES ('Jhonatan', 'Ojeda Sanchez', 'jhona@gmail.com', '963258741', 'Peru')")
+        "INSERT INTO custumers (firstname, lastname, email, phone, address) VALUES (%s, %s, %s, %s, %s);"
+        , (request.json['firstname'], request.json['lastname'], request.json['email'], request.json['phone'],
+           request.json['address']))
     mysql.connection.commit()
-    return "ok save custumer"
+    return "Custumers saved"
+
+
+@app.route('/custumers', methods=['PUT'])
+def update_custumer():
+    # return request.json['firstname']
+    cur = mysql.connection.cursor()
+    cur.execute(
+        "UPDATE custumers SET firstname = %s, lastname = %s, email = %s, phone = %s, address = %s WHERE custumer_id = %s;"
+        , (request.json['firstname'], request.json['lastname'], request.json['email'], request.json['phone'],
+           request.json['address'], request.json['custumer_id']))
+    mysql.connection.commit()
+    return "Custumers update"
 
 
 @app.route('/custumers/<int:id>', methods=['DELETE'])
