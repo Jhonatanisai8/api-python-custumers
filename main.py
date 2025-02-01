@@ -1,8 +1,11 @@
 from flask import Flask, render_template, jsonify, request
 from flask_mysqldb import MySQL
+from flask_cors import CORS, cross_origin
 
 # configuracion con la base de datos
 app = Flask(__name__)
+cors = CORS(app)
+app.config['CORS_HEADERS'] = 'Content-Type'
 app.config['MYSQL_HOST'] = 'localhost'
 app.config['MYSQL_USER'] = 'root'
 app.config['MYSQL_PASSWORD'] = 'admin123'
@@ -12,7 +15,8 @@ app.config['MYSQL_DB'] = 'users_bd'
 mysql = MySQL(app)
 
 
-@app.route('/custumers', methods=['POST'])
+@app.route('/api/custumers', methods=['POST'])
+@cross_origin() # para que se llame desde puertos diferentes
 def save_custumer():
     # return request.json['firstname']
     cur = mysql.connection.cursor()
@@ -24,7 +28,8 @@ def save_custumer():
     return "Custumers saved"
 
 
-@app.route('/custumers', methods=['PUT'])
+@app.route('/api/custumers', methods=['PUT'])
+@cross_origin() # para que se llame desde puertos diferentes
 def update_custumer():
     # return request.json['firstname']
     cur = mysql.connection.cursor()
@@ -36,7 +41,8 @@ def update_custumer():
     return "Custumers update"
 
 
-@app.route('/custumers/<int:id>', methods=['DELETE'])
+@app.route('/api/custumers/<int:id>', methods=['DELETE'])
+@cross_origin() # para que se llame desde puertos diferentes
 def remove_custumer(id):
     cur = mysql.connection.cursor()
     cur.execute(
@@ -45,7 +51,8 @@ def remove_custumer(id):
     return "ok remove custumer by id ", id
 
 
-@app.route('/custumers/<int:id>')
+@app.route('/api/custumers/<int:id>')
+@cross_origin() # para que se llame desde puertos diferentes
 def get_custumer(id):
     cur = mysql.connection.cursor()
     cur.execute(
@@ -60,7 +67,8 @@ def get_custumer(id):
     return jsonify(content)
 
 
-@app.route('/custumers')
+@app.route('/api/custumers')
+@cross_origin() # para que se llame desde puertos diferentes
 def get_all_custumer():
     cur = mysql.connection.cursor()
     cur.execute("SELECT custumer_id,firstname,lastname,email,phone, address FROM custumers")
@@ -80,6 +88,7 @@ def get_all_custumer():
 
 
 @app.route('/holaMundo')
+@cross_origin() # para que se llame desde puertos diferentes
 def index():
     return render_template("index.html")
 
